@@ -1,9 +1,17 @@
 FROM drupal:7
-ADD ./.bashrc /root/.bashrc
-ADD docker-php-ext-mbstring.ini /usr/local/etc/php/conf.d/docker-php-ext-mbstring.ini
-RUN apt-get update && apt-get install -y mysql-client
-# && rm -rf /var/lib/apt/lists/*
 
+#ADD ./docker-php-ext-mbstring.ini /usr/local/etc/php/conf.d/docker-php-ext-mbstring.ini
+#ADD ./docker-php-ext-bcmath.ini /usr/local/etc/php/conf.d/docker-php-ext-bcmath.ini
+#ADD ./docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+ADD ./.bashrc /root/.bashrc
+
+RUN apt-get update && apt-get install -y mysql-client
+RUN apt-get update && apt-get install -y php-pear drush php5-xdebug
+RUN docker-php-ext-install bcmath
+
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+# && rm -rf /var/lib/apt/lists/*
 # mbstring.ini is needed by phpamqp
 # && rm /usr/local/etc/php/conf.d/docker-php-ext-mbstring.ini
-RUN pear channel-discover pear.drush.org && pear install drush/drush
+

@@ -1,9 +1,11 @@
 corp-rabbitmq:
-    image: rabbitmq
+    image: "rabbitmq:management"
     ports:
-        - "25672:25672"
-        - "5672:5672"
-        - "4369:4369"
+        - '25672:25672'
+        - '5671:5671'
+        - '5672:5672'
+        - '4369:4369'
+        - '15672:15672'
 corp-vol:
     build: volume-db
     volumes:

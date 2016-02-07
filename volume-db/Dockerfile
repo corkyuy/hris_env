@@ -1,4 +1,4 @@
-FROM scratch
+FROM ubuntu:precise
 
 ADD ./default.settings.php /var/www/html/sites/default/default.settings.php
 ADD ./settings.php /var/www/html/sites/default/settings.php
