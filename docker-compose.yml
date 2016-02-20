@@ -1,57 +1,75 @@
-corp-rabbitmq:
+version: '2'
+services:
+  corp-rabbitmq:
     image: "rabbitmq:management"
     ports:
-        - '25672:25672'
-        - '5671:5671'
-        - '5672:5672'
-        - '4369:4369'
-        - '15672:15672'
-corp-vol:
+      - '25672:25672'
+      - '5671:5671'
+      - '5672:5672'
+      - '4369:4369'
+      - '15672:15672'
+    networks:
+      - back-tier
+  corp-vol:
     build: volume-db
     volumes:
-        - ./code:/var/www/html
-corp-db:
+      - ./code:/var/www/html
+  corp-db:
     image: mysql
     ports:
-        - "3306:3306"
+      - "3306:3306"
     environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_DATABASE=hris
-        - MYSQL_USER=administrator
-        - MYSQL_PASSWORD=pass123
-    volumes_from:
-        - corp-vol
-corp:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=hris
+      - MYSQL_USER=administrator
+      - MYSQL_PASSWORD=pass123
+    volumes:
+      - corp-db-data:/var/lib/mysql
+    networks:
+      - back-tier
+  corp:
     build: hris-web
     ports:
-        - "5000:80"
+      - "5000:80"
     links:
-        - corp-db
-        - corp-rabbitmq
+      - corp-db
+      - corp-rabbitmq
     volumes_from:
-        - corp-vol
-
-branch-vol:
+      - corp-vol
+    networks:
+      - front-tier
+      - back-tier
+  branch-vol:
     build: volume-db
     volumes:
-        - ./code:/var/www/html
-branch-db:
+      - ./code:/var/www/html
+  branch-db:
     image: mysql
     ports:
-        - "3316:3306"
+      - "3316:3306"
     environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_DATABASE=hris
-        - MYSQL_USER=administrator
-        - MYSQL_PASSWORD=pass123
-    volumes_from:
-        - branch-vol
-branch:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=hris
+      - MYSQL_USER=administrator
+      - MYSQL_PASSWORD=pass123
+    volumes:
+      - branch-db-data:/var/lib/mysql
+  branch:
     build: hris-web
     ports:
-        - "5001:80"
+      - "5001:80"
     links:
-        - branch-db
+      - branch-db
     volumes_from:
-        - branch-vol
+      - branch-vol
+volumes:
+  corp-db-data:
+    driver: local
+  branch-db-data:
+    driver: local
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
 
