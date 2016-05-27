@@ -1,9 +1,9 @@
 #!/bin/bash
 
-VM=hris
+VM=$1
 DOCKER_MACHINE_LOC=/usr/local/bin/docker-machine
 VBOXMANAGE=/Applications/VirtualBox.app/Contents/MacOS/VBoxManage
-STORAGE_PATH=/Volumes/workspace/.docker/hris
+STORAGE_PATH=/Users/corkyuy/Documents/workspace/.docker/hris
 DOCKER_MACHINE=/usr/local/bin/docker-machine
 
 BLUE='\033[0;34m'
@@ -17,7 +17,8 @@ clear
 
 if [ ! -f "${DOCKER_MACHINE_LOC}" ] || [ ! -f "${VBOXMANAGE}" ]; then
   cat <<EOF
-    Either VirtualBox or Docker Machine are not installed. Please re-run the Toolbox Installer and try again.
+    Either VirtualBox or Docker Machine are not installed.
+    Please re-run the Toolbox Installer and try again.
 EOF
   exit 1
 fi
@@ -60,11 +61,15 @@ echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} \
 echo "For help getting started, check out the docs at https://docs.docker.com"
 echo
 
-USER_SHELL="$(dscl /Search -read /Users/${USER} UserShell | awk '{print $2}' | head -n 1)"
-if [[ "${USER_SHELL}" == *"/bash"* ]] || [[ "${USER_SHELL}" == *"/zsh"* ]] || \
-  [[ "${USER_SHELL}" == *"/sh"* ]]; then
-  "${USER_SHELL}" --login
-else
-  "${USER_SHELL}"
-fi
+#USER_SHELL="$(dscl /Search -read /Users/${USER} UserShell | awk '{print $2}' | head -n 1)"
+#if [[ "${USER_SHELL}" == *"/bash"* ]] || [[ "${USER_SHELL}" == *"/zsh"* ]] || \
+#  [[ "${USER_SHELL}" == *"/sh"* ]]; then
+#  "${USER_SHELL}" --login
+#else
+#  "${USER_SHELL}"
+#fi
 alias docker-machine='docker-machine -s "${STORAGE_PATH}"'
+export STORAGE_PATH=/Users/corkyuy/Documents/workspace/.docker/hris
+export VM=$1
+export dockerip=$(docker-machine ip $1)
+echo $dockerip

@@ -54,14 +54,14 @@ services:
       - MYSQL_PASSWORD=pass123
     volumes:
       - branch-db-data:/var/lib/mysql
-  branch:
-    build: hris-web
-    ports:
-      - "5001:80"
-    links:
-      - branch-db
-    volumes_from:
-      - branch-vol
+#  branch:
+#    build: hris-web
+#    ports:
+#      - "5001:80"
+#    links:
+#      - branch-db
+#    volumes_from:
+#      - branch-vol
 volumes:
   corp-db-data:
     driver: local

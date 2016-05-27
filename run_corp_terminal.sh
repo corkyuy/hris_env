@@ -1,2 +1,2 @@
 #!/bin/bash
-docker exec -ti hris_corp_1 /bin/bash
+docker exec -ti ${VM}_corp_1 /bin/bash
