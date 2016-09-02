@@ -1,0 +1,64 @@
+version: '2'
+services:
+  branch-vol:
+    build: volume-db
+    volumes:
+      - ./code:/var/www/html
+  branch-db:
+    image: mysql
+    ports:
+      - "3316:3316"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=hris
+      - MYSQL_USER=administrator
+      - MYSQL_PASSWORD=pass123
+    volumes:
+      - branch-db-data:/var/lib/mysql
+    networks:
+      - back-tier
+  branch:
+    build: hris-web
+    ports:
+      - "5000:80"
+    links:
+      - branch-db
+    volumes_from:
+      - branch-vol
+    networks:
+      - front-tier
+      - back-tier
+#  branch-vol:
+#    build: volume-db
+#    volumes:
+#      - ./code:/var/www/html
+#  branch-db:
+#    image: mysql
+#    ports:
+#      - "3316:3306"
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=root
+#      - MYSQL_DATABASE=hris
+#      - MYSQL_USER=administrator
+#      - MYSQL_PASSWORD=pass123
+#    volumes:
+#      - branch-db-data:/var/lib/mysql
+#  branch:
+#    build: hris-web
+#    ports:
+#      - "5001:80"
+#    links:
+#      - branch-db
+#    volumes_from:
+#      - branch-vol
+volumes:
+  branch-db-data:
+    driver: local
+#  branch-db-data:
+#    driver: local
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
+
