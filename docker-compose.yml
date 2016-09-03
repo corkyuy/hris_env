@@ -1,19 +1,10 @@
 version: '2'
 services:
-  corp-rabbitmq:
-    image: "rabbitmq:management"
-    ports:
-      - '25672:25672'
-      - '5671:5671'
-      - '5672:5672'
-      - '4369:4369'
-      - '15672:15672'
-    networks:
-      - back-tier
   corp-vol:
     build: volume-db
     volumes:
-      - ./code:/var/www/html
+      - ./code:/var/www/htdocs
+#      - ./code:/var/www/html
   corp-db:
     image: mysql
     ports:
@@ -27,46 +18,29 @@ services:
       - corp-db-data:/var/lib/mysql
     networks:
       - back-tier
-  corp:
+  web:
     build: hris-web
-    ports:
-      - "5000:80"
     links:
       - corp-db
-      - corp-rabbitmq
     volumes_from:
       - corp-vol
     networks:
-      - front-tier
       - back-tier
-#  branch-vol:
-#    build: volume-db
-#    volumes:
-#      - ./code:/var/www/html
-#  branch-db:
-#    image: mysql
-#    ports:
-#      - "3316:3306"
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=root
-#      - MYSQL_DATABASE=hris
-#      - MYSQL_USER=administrator
-#      - MYSQL_PASSWORD=pass123
-#    volumes:
-#      - branch-db-data:/var/lib/mysql
-#  branch:
-#    build: hris-web
-#    ports:
-#      - "5001:80"
-#    links:
-#      - branch-db
-#    volumes_from:
-#      - branch-vol
+  corp:
+    build: docker-drupal-php53-dev-master
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes_from:
+      - corp-vol
+    links:
+      - corp-db
+    networks:
+      - back-tier
+      - front-tier
 volumes:
   corp-db-data:
     driver: local
-#  branch-db-data:
-#    driver: local
 networks:
   front-tier:
     driver: bridge

@@ -3,11 +3,12 @@ services:
   branch-vol:
     build: volume-db
     volumes:
-      - ./code:/var/www/html
+      - ./code:/var/www/htdocs
+#      - ./code:/var/www/html
   branch-db:
     image: mysql
     ports:
-      - "3316:3316"
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=hris
@@ -18,9 +19,11 @@ services:
     networks:
       - back-tier
   branch:
-    build: hris-web
+#    build: hris-web
+    build: docker-drupal-php53-dev-master
     ports:
-      - "5000:80"
+      - "80:80"
+      - "443:443"
     links:
       - branch-db
     volumes_from:
